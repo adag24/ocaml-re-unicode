@@ -8,9 +8,9 @@ module type T = sig
 
   module Unsafe : sig
     val unsafe_slice : string -> int -> int -> bytes
-    val unsafe_bytes_with_nex_post : string -> int -> bytes * int
+    val unsafe_bytes_with_next_pos : string -> int -> bytes * int
     val unsafe_bytes : string -> int -> bytes
-    val unsafe_bytes_rev_with_nex_post : string -> int -> bytes * int
+    val unsafe_bytes_rev_with_next_pos : string -> int -> bytes * int
     val unsafe_bytes_rev : string -> int -> bytes
   end
 
@@ -519,11 +519,11 @@ module MakeCodec (S : Skel with type letter = Uchar.t) :
           ofs bytes 0 len;
         bytes
 
-    let unsafe_bytes_with_nex_post s ofs =
+    let unsafe_bytes_with_next_pos s ofs =
       let w = width String.unsafe_get s ofs in
       (unsafe_slice s ofs w, ofs + w)
 
-    let unsafe_bytes_rev_with_nex_post s ofs =
+    let unsafe_bytes_rev_with_next_pos s ofs =
       let w = width_rev String.unsafe_get s ofs in
       (unsafe_slice s (ofs + 1 - w) w, ofs - w)
 
@@ -868,13 +868,13 @@ module Latin1 : T with type letter = char = struct
     let unsafe_slice : string -> int -> int -> bytes =
      fun s ofs len -> Bytes.sub (Bytes.unsafe_of_string s) ofs len
 
-    let unsafe_bytes_with_nex_post : string -> int -> bytes * int =
+    let unsafe_bytes_with_next_pos : string -> int -> bytes * int =
      fun s ofs -> (unsafe_slice s ofs 1, succ ofs)
 
     let unsafe_bytes : string -> int -> bytes =
      fun s ofs -> Bytes.sub (Bytes.unsafe_of_string s) ofs 1
 
-    let unsafe_bytes_rev_with_nex_post : string -> int -> bytes * int =
+    let unsafe_bytes_rev_with_next_pos : string -> int -> bytes * int =
      fun s ofs -> (unsafe_bytes s ofs, pred ofs)
 
     let unsafe_bytes_rev : string -> int -> bytes =

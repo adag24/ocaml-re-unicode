@@ -36,6 +36,6 @@
  re_private_unicode
  (library
   (name re_private_unicode)
-  (libraries uunf))
+  (libraries uucp uunf))
  (copy_files %{project_root}/lib/unicode/*.{ml,mli})
  )

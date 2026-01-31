@@ -159,7 +159,7 @@ struct
         (mul beg [ String.sub str s (pos - s) ], pos))
       else
         let bytes, pos_next =
-          Cset.Codec.Unsafe.unsafe_bytes_with_nex_post str pos
+          Cset.Codec.Unsafe.unsafe_bytes_with_next_pos str pos
         in
         match Cset.CodePage.from_letter @@ Cset.Codec.from_bytes bytes with
         | c when CodePage.equal c !^'\\' ->

@@ -24,6 +24,7 @@
 
 module type Categories = sig
   type c
+
   val cany : (c * c) list
   val ascii : (c * c) list
   val cdigit : (c * c) list
@@ -53,6 +54,7 @@ module type CodePage = sig
 
   val to_letter : t -> letter
   val from_letter : letter -> t
+
   (** special characters which isn't present in any set (not even in [cany]) *)
   val null : t
 
@@ -72,7 +74,6 @@ module type CodePage = sig
   val pp : Format.formatter -> t -> unit
 
   module Categories : Categories with type c := t
-
 end
 
 module type T = sig
@@ -129,19 +130,18 @@ module type T = sig
 
   val csingle : letter -> t
   val is_empty : t -> bool
-
   val prepend : t -> 'a list -> (t * 'a list) list -> (t * 'a list) list
   val pick : t -> cp
   val offset : int -> t -> t
   val to_dyn : t -> Dyn.t
 end
 
-module Make : functor (Codec : Uucodecs.T) (_ : CodePage with type letter = Codec.letter) -> T with type letter = Codec.letter
+module Make : functor
+  (Codec : Uucodecs.T)
+  (_ : CodePage with type letter = Codec.letter)
+  -> T with type letter = Codec.letter
 
 module Utf8 : T with type letter = Uchar.t
-
 module Utf16be : T with type letter = Uchar.t
-
 module Utf16le : T with type letter = Uchar.t
-
 module Latin1 : T with type letter = Char.t

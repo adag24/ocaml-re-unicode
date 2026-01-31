@@ -8,9 +8,9 @@ module type T = sig
 
   module Unsafe : sig
     val unsafe_slice : string -> int -> int -> bytes
-    val unsafe_bytes_with_nex_post : string -> int -> bytes * int
+    val unsafe_bytes_with_next_pos : string -> int -> bytes * int
     val unsafe_bytes : string -> int -> bytes
-    val unsafe_bytes_rev_with_nex_post : string -> int -> bytes * int
+    val unsafe_bytes_rev_with_next_pos : string -> int -> bytes * int
     val unsafe_bytes_rev : string -> int -> bytes
   end
 

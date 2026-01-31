@@ -42,7 +42,7 @@ module Make (Cset : Cset.T) = struct
   let test t letter =
     if not (eos t) then
       let b, pos_next =
-        Cset.Codec.Unsafe.unsafe_bytes_with_nex_post t.str t.pos
+        Cset.Codec.Unsafe.unsafe_bytes_with_next_pos t.str t.pos
       in
       let b' = Cset.Codec.to_bytes letter in
       (Bytes.equal b b', pos_next)
@@ -55,7 +55,7 @@ module Make (Cset : Cset.T) = struct
     r
     (* let b = Cset.CodePage.from_letter letter in
     let cp'', pos_next =
-      Cset.Codec.Unsafe.unsafe_bytes_with_nex_post t.str t.pos
+      Cset.Codec.Unsafe.unsafe_bytes_with_next_pos t.str t.pos
       |> fun (bytes, pos_next) ->
       (Cset.Codec.from_bytes bytes |> Cset.CodePage.from_letter, pos_next)
     in
@@ -78,7 +78,7 @@ module Make (Cset : Cset.T) = struct
 
   let get t =
     let letter, pos_next =
-      Cset.Codec.Unsafe.unsafe_bytes_with_nex_post t.str t.pos
+      Cset.Codec.Unsafe.unsafe_bytes_with_next_pos t.str t.pos
       |> fun (bytes, pos_next) -> (Cset.Codec.from_bytes bytes, pos_next)
     in
     t.pos <- pos_next;

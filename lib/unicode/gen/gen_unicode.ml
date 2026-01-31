@@ -29,7 +29,6 @@ let ranges f (t : Uucd.t) =
   Uucd.Cpmap.iter (fun k props -> update_rng rng f k props) t.repertoire;
   List.rev rng.ranges
 
-(* OK *)
 let cset_punctuation t =
   let general_category = Uucd.general_category in
   let f =
@@ -43,7 +42,6 @@ let cset_punctuation t =
   in
   ranges f t
 
-(* OK *)
 let cset_printable t =
   let general_category = Uucd.general_category in
   let f =
@@ -69,7 +67,6 @@ let cset_printable t =
   in
   ranges f t
 
-(* OK *)
 let cset_graphic t =
   let general_category = Uucd.general_category in
   let f =
@@ -95,7 +92,6 @@ let cset_graphic t =
   in
   ranges f t
 
-(* OK *)
 let cset_control t =
   let gc = Uucd.general_category in
   let f =
@@ -103,7 +99,6 @@ let cset_control t =
   in
   ranges f t
 
-(* OK *)
 let cset_space t =
   let ws = Uucd.white_space in
   let f =
@@ -111,7 +106,6 @@ let cset_space t =
   in
   ranges f t
 
-(* OK *)
 let cset_new_line t =
   let line_break = Uucd.line_break in
   let f =
@@ -124,7 +118,6 @@ let cset_new_line t =
   in
   ranges f t
 
-(* OK *)
 let cset_hex_digit t =
   let hex = Uucd.hex_digit in
   let f =
@@ -133,7 +126,6 @@ let cset_hex_digit t =
   in
   ranges f t
 
-(* OK *)
 let cset_wordc t =
   let alphabetic props =
     match Uucd.find props Uucd.alphabetic with Some true -> true | _ -> false
@@ -149,7 +141,6 @@ let cset_wordc t =
   in
   ranges f t
 
-(* OK *)
 let cset_alnum t =
   let alphabetic props =
     match Uucd.find props Uucd.alphabetic with Some true -> true | _ -> false
@@ -162,7 +153,6 @@ let cset_alnum t =
   let f = fun _ props -> alphabetic props || numeric_type props in
   ranges f t
 
-(* OK *)
 let cset_alpha t =
   let alphabetic = Uucd.alphabetic in
   let f =
@@ -171,7 +161,6 @@ let cset_alpha t =
   in
   ranges f t
 
-(* OK *)
 let cset_upper t =
   let uppercase = Uucd.uppercase in
   let f =
@@ -180,7 +169,6 @@ let cset_upper t =
   in
   ranges f t
 
-(* OK *)
 let cset_lower t =
   let lowercase = Uucd.lowercase in
   let f =
@@ -189,7 +177,6 @@ let cset_lower t =
   in
   ranges f t
 
-(* OK *)
 let cset_calpha t =
   let gc = Uucd.general_category in
   let f =
@@ -201,7 +188,6 @@ let cset_calpha t =
   in
   ranges f t
 
-(* OK *)
 let cset_cword t =
   let gc = Uucd.general_category in
   let f =
@@ -240,7 +226,6 @@ let cset_calnum t =
   in
   ranges f t
 
-(* OK *)
 let cset_clower t =
   let gc = Uucd.general_category in
   let f =
@@ -248,7 +233,6 @@ let cset_clower t =
   in
   ranges f t
 
-(* OK *)
 let cset_cupper t =
   let gc = Uucd.general_category in
   let f =
@@ -256,7 +240,6 @@ let cset_cupper t =
   in
   ranges f t
 
-(* OK *)
 let cset_cdigit t =
   let nt = Uucd.numeric_type in
   let f =
@@ -447,21 +430,21 @@ let values t =
   ]
 
 let pp_binary_search_impl ppf () =
-  pf ppf "let binary_search comp i v =\n";
-  pf ppf "  let rec loop start finish =\n";
-  pf ppf "    if finish < start || start > finish then false\n";
-  pf ppf "    else\n";
-  pf ppf "      let m = (start + finish) / 2 in\n";
-  pf ppf "      match comp i v.(m) with\n";
-  pf ppf "        | 0 -> true\n";
-  pf ppf "        | 1 -> loop (m + 1) finish\n";
-  pf ppf "        | _ -> loop start (m - 1)\n";
-  pf ppf "  in\n";
-  pf ppf "  loop 0 (Array.length v - 1)\n"
+  pf ppf "let binary_search comp i v =@.";
+  pf ppf "  let rec loop start finish =@.";
+  pf ppf "    if finish < start || start > finish then false@.";
+  pf ppf "    else@.";
+  pf ppf "      let m = (start + finish) / 2 in@.";
+  pf ppf "      match comp i v.(m) with@.";
+  pf ppf "        | 0 -> true@.";
+  pf ppf "        | 1 -> loop (m + 1) finish@.";
+  pf ppf "        | _ -> loop start (m - 1)@.";
+  pf ppf "  in@.";
+  pf ppf "  loop 0 (Array.length v - 1)@."
 
 let pp_compare_impl ppf () =
-  pf ppf "let compare i (min, max) =\n";
-  pf ppf "  if i >= min && i <= max then 0 else if i <= min then -1 else 1\n"
+  pf ppf "let compare i (min, max) =@.";
+  pf ppf "  if i >= min && i <= max then 0 else if i <= min then -1 else 1@."
 
 let nfx_qc_prop = function
   | `NFD -> Uucd.nfd_quick_check
@@ -500,24 +483,77 @@ let pp_nfx_quick_check_impl ppf t =
   pf ppf "@[%a@]@." pp_all_nfx_qc_data_impl t;
   pf ppf "@[%a@]@." pp_compare_impl ();
   pf ppf "@[%a@]@." pp_binary_search_impl ();
-  pf ppf "let nfx_quick_check flag u =\n";
-  pf ppf "  let cp = Uchar.to_int u in\n";
-  pf ppf "  let t = match flag with\n";
-  pf ppf "    | `NFD -> nfd_qc_data\n";
-  pf ppf "    | `NFC -> nfc_qc_data\n";
-  pf ppf "    | `NFKD -> nfkd_qc_data\n";
-  pf ppf "    | `NFKC -> nfkc_qc_data\n";
-  pf ppf "  in\n";
-  pf ppf "  binary_search compare cp t\n"
+  pf ppf "let nfx_quick_check flag u =@.";
+  pf ppf "  let cp = Uchar.to_int u in@.";
+  pf ppf "  let t = match flag with@.";
+  pf ppf "    | `NFD -> nfd_qc_data@.";
+  pf ppf "    | `NFC -> nfc_qc_data@.";
+  pf ppf "    | `NFKD -> nfkd_qc_data@.";
+  pf ppf "    | `NFKC -> nfkc_qc_data@.";
+  pf ppf "  in@.";
+  pf ppf "  binary_search compare cp t@."
 
 let pp_nfx_quick_check_intf ppf () =
   pf ppf "val nfx_quick_check : Uunf.form -> Uchar.t -> bool"
+
+let simple_case_folding (t : Uucd.t) =
+  let tbl = Hashtbl.create 1026 in
+  let cf = Uucd.simple_case_folding in
+  Uucd.Cpmap.iter
+    (fun k props ->
+      match Uucd.find props cf with
+      | None | Some `Self -> ()
+      | Some (`Cp cp) -> (
+        try
+          Hashtbl.find tbl cp |> fun l ->
+          let l =
+            let l = if List.mem cp l then l else cp :: l in
+            if List.mem k l then l else k :: l
+          in
+          Hashtbl.replace tbl cp l
+        with Not_found -> Hashtbl.add tbl cp [ k; cp ]))
+    t.repertoire;
+  Hashtbl.fold (fun k l acc -> (k, l) :: acc) tbl []
+  |> List.sort (fun (k1, _) (k2, _) -> Int.compare k1 k2)
+
+let pp_simple_case_fold ppf (k, l) =
+  pf ppf "@[%a, %a@]@ " pp_hex k (pp_ml_list pp_hex) l
+
+let pp_simple_case_folding_impl ppf t =
+  let a = simple_case_folding t in
+  pf ppf "let simple_case_folding = %a" (pp_ml_array pp_simple_case_fold) a
+
+let pp_get_simple_case_folding_impl ppf t =
+  pf ppf "@[%a@]@." pp_simple_case_folding_impl t;
+  pf ppf "let get_simple_case_folding cp =@.";
+  pf ppf "  try@.";
+  pf ppf "    let cp =@.";
+  pf ppf "      match Uucp.Case.Fold.fold (Uchar.of_int cp) with@.";
+  pf ppf "      | `Self -> cp@.";
+  pf ppf "      | `Uchars [ cp'] -> Uchar.to_int cp'@.";
+  pf ppf "      | _ -> raise Exit@.";
+  pf ppf "    in@.";
+  pf ppf "    let rec loop start finish =@.";
+  pf ppf "      if finish < start || start > finish then []@.";
+  pf ppf "      else@.";
+  pf ppf "        let m = (start + finish) / 2 in@.";
+  pf ppf "        match Int.compare cp (fst simple_case_folding.(m)) with@.";
+  pf ppf "        | 0 -> snd simple_case_folding.(m)@.";
+  pf ppf "        | 1 -> loop (m + 1) finish@.";
+  pf ppf "        | _ -> loop start (m - 1)@.";
+  pf ppf "    in@.";
+  pf ppf "    loop 0 (Array.length simple_case_folding - 1)@.";
+  pf ppf "  with Exit -> []@."
+
+let pp_get_simple_case_folding_intf ppf () =
+  pf ppf "val get_simple_case_folding : int -> int list"
 
 let pp_impl ppf t =
   pf ppf "@[<v 0>@[%a@]@,@[<v 0>@]@." pp_warning ();
   pf ppf "@[%a@]@." pp_values_impl
     (List.map (fun (impl, _, _) -> impl) @@ values t);
   pp_nfx_quick_check_impl ppf t;
+  pp_get_simple_case_folding_impl ppf t;
   pf ppf "@[<v 0>@[<v 0>%a@]@,@]@." (pp_module_impl "Regexp")
   @@ List.map (fun (name, l, _) -> pp_prop_impl (name, l))
   @@ properties t
@@ -527,6 +563,7 @@ let pp_intf ppf t =
   pf ppf "@[%a@]@." pp_values_intf
     (List.map (fun (_, intf, doc) -> (intf, doc)) @@ values t);
   pf ppf "@[%a@]@." pp_nfx_quick_check_intf ();
+  pf ppf "@[%a@]@." pp_get_simple_case_folding_intf ();
   pf ppf "@[%a@]@." (pp_module_intf "Regexp")
   @@ List.map (fun (name, _, doc) -> (pp_prop_val_intf name, doc))
   @@ properties t
