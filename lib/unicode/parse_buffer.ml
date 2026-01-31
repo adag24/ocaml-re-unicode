@@ -41,31 +41,35 @@ module Make (Cset : Cset.T) = struct
 
   let test t letter =
     if not (eos t) then
-      let cp', pos_next =
+      let b, pos_next =
         Cset.Codec.Unsafe.unsafe_bytes_with_nex_post t.str t.pos
-        |> fun (bytes, pos_next) ->
-        (Cset.Codec.from_bytes bytes |> Cset.CodePage.from_letter, pos_next)
       in
-      (Cset.CodePage.equal cp' (Cset.CodePage.from_letter letter), pos_next)
+      let b' = Cset.Codec.to_bytes letter in
+      (Bytes.equal b b', pos_next)
     else (false, 0)
 
   let test2 t letter letter' =
     t.pos + 1 < String.length t.str
     &&
-    let cp = Cset.CodePage.from_letter letter in
+    let r, pos_next = test t letter in
+    r
+    (* let b = Cset.CodePage.from_letter letter in
     let cp'', pos_next =
       Cset.Codec.Unsafe.unsafe_bytes_with_nex_post t.str t.pos
       |> fun (bytes, pos_next) ->
       (Cset.Codec.from_bytes bytes |> Cset.CodePage.from_letter, pos_next)
     in
-    Cset.CodePage.equal cp'' cp
+    Cset.CodePage.equal cp'' cp *)
     &&
-    let cp' = Cset.CodePage.from_letter letter' in
+    let b = Cset.Codec.to_bytes letter' in
+    let b' = Cset.Codec.Unsafe.unsafe_bytes t.str pos_next in
+    Bytes.equal b b'
+  (* let cp' = Cset.CodePage.from_letter letter' in
     let cp'' =
       Cset.Codec.Unsafe.unsafe_bytes t.str pos_next
       |> Cset.Codec.from_bytes |> Cset.CodePage.from_letter
     in
-    Cset.CodePage.equal cp'' cp'
+    Cset.CodePage.equal cp'' cp' *)
 
   let accept t c =
     let r, pos_next = test t c in
@@ -73,9 +77,9 @@ module Make (Cset : Cset.T) = struct
     r
 
   let get t =
-    let pos_next, letter =
+    let letter, pos_next =
       Cset.Codec.Unsafe.unsafe_bytes_with_nex_post t.str t.pos
-      |> fun (bytes, pos_next) -> (pos_next, Cset.Codec.from_bytes bytes)
+      |> fun (bytes, pos_next) -> (Cset.Codec.from_bytes bytes, pos_next)
     in
     t.pos <- pos_next;
     letter
@@ -89,17 +93,22 @@ module Make (Cset : Cset.T) = struct
           true)
         else
           let w = try Cset.Codec.width String.unsafe_get s' ofs with _ -> 1 in
-          let letter =
+          let b = Cset.Codec.Unsafe.unsafe_slice s' ofs w in
+          let b' = Cset.Codec.Unsafe.unsafe_slice t.str (t.pos + ofs) w in
+          if Bytes.equal b b' then iter max (ofs + w) else false
+        (* let letter =
             Cset.Codec.Unsafe.unsafe_slice s' ofs w |> Cset.Codec.from_bytes
           in
           let letter' =
             Cset.Codec.Unsafe.unsafe_slice t.str (t.pos + ofs) w
             |> Cset.Codec.from_bytes
           in
-          if Cset.Codec.equal letter letter' then iter max (ofs + w) else false
+          if Cset.Codec.equal letter letter' then iter max (ofs + w) else false *)
       in
       iter len 0
     with _ -> false
+
+  let zero = Cset.CodePage.(to_int @@ from_letter @@ of_char '0')
 
   let rec integer' t i =
     if eos t then Some i
@@ -107,11 +116,7 @@ module Make (Cset : Cset.T) = struct
       let cp = get t |> Cset.CodePage.from_letter in
       match Cset.mem cp Cset.cdigit with
       | true ->
-        let i' =
-          (10 * i)
-          + (Cset.CodePage.to_int cp
-            - Cset.CodePage.(to_int @@ from_letter @@ of_char '0'))
-        in
+        let i' = (10 * i) + (Cset.CodePage.to_int cp - zero) in
         if i' < i then raise Parse_error;
         integer' t i'
       | _ ->
@@ -123,10 +128,7 @@ module Make (Cset : Cset.T) = struct
     else
       let cp = get t |> Cset.CodePage.from_letter in
       match Cset.mem cp Cset.cdigit with
-      | true ->
-        integer' t
-          (Cset.CodePage.to_int cp
-          - Cset.CodePage.(to_int @@ from_letter @@ of_char '0'))
+      | true -> integer' t (Cset.CodePage.to_int cp - zero)
       | _ ->
         unget t;
         None

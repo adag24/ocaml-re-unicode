@@ -20,6 +20,17 @@
    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 *)
 
+(* TODO: https://www.pcre.org/original/doc/html/pcrepattern.html
+   add in module Pcre:
+   - \p{}: a character with the xx property
+   - \P{}  a character without the xx property
+   - \X
+   - Xan   Any alphanumeric character
+   - Xps   Any POSIX space character
+   - Xsp   Any Perl space character
+   - Xwd   Any Perl "word" characte
+*)
+
 exception Parse_error = Parse_buffer.Parse_error
 exception Not_supported
 
