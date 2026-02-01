@@ -24,6 +24,7 @@
   (ocaml (>= 4.08.0))
   uucp
   (uucd :build)
+  (zip :build)
   (ppx_expect :with-test)
   (ounit2 :with-test)
   (js_of_ocaml :with-test))
