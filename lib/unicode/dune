@@ -13,9 +13,7 @@
  (synopsis "Pure OCaml unicode regular expression library")
  (libraries
   uunf
-  uucd
-  uucp
-  uuseg))
+  uucp))
 
 (copy_files#
  (enabled_if
