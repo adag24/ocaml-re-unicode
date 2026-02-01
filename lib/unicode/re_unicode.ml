@@ -50,6 +50,8 @@ struct
 end
 
 module Utf8 = Make (Cset.Utf8) (Color_map.Utf8)
+module Utf16be = Make (Cset.Utf16be) (Color_map.Utf16be)
+module Utf16le = Make (Cset.Utf16le) (Color_map.Utf16le)
 module Latin1 = Make (Cset.Latin1) (Color_map.Latin1)
 
 module Private = struct

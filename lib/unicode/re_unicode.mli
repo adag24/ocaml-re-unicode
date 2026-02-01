@@ -32,6 +32,8 @@ module Make
          and type cset_t = Cset.t) : T
 
 module Utf8 : T with type Cset.letter := Uchar.t
+module Utf16be : T with type Cset.letter := Uchar.t
+module Utf16le : T with type Cset.letter := Uchar.t
 module Latin1 : T with type Cset.letter := Char.t
 
 (**/**)
