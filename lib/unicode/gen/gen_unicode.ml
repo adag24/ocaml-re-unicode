@@ -189,20 +189,19 @@ let cset_calpha t =
   ranges f t
 
 let cset_cword t =
+  let alpha = Uucd.alphabetic in
   let gc = Uucd.general_category in
+  let jcntl = Uucd.join_control  in
   let f =
-   fun k props ->
-    match (k, Uucd.find props gc) with
-    | _, Some `Lu
-    | _, Some `Ll
-    | _, Some `Lt
-    | _, Some `Lm
-    | _, Some `Lo
-    | _, Some `Nd
-    | _, Some `Nl
-    | _, Some `No
-    | 0x005f, _ ->
-      true
+   fun _ props ->
+    match Uucd.find props alpha with
+    | Some true -> true
+    | _ ->
+    match Uucd.find props gc with
+    | Some `Nd -> true
+    | _ ->
+      match Uucd.find props jcntl with
+      | Some true -> true
     | _ -> false
   in
   ranges f t
